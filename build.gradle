@@ -1,0 +1,77 @@
+group 'com.bryanreinero'
+version '1.0-SNAPSHOT'
+
+group 'bryanreinero'
+
+ext.javaDriverVersion = '3.2.2'
+ext.buildDir = './build'
+
+ext.jettyVersion = '9.3.9.M1'
+
+apply plugin: 'java'
+//apply plugin: 'application'
+apply plugin: 'war'
+apply plugin: 'jetty'
+
+
+httpPort = 8080
+stopPort = 8079
+stopKey = "stopKey"
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url "https://repository.cloudera.com/artifactory/cloudera-repos/" }
+}
+
+version = '1.0.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile files("${System.properties['java.home']}/../lib/tools.jar")
+    compile "org.mongodb:mongo-java-driver:${javaDriverVersion}"
+    compile 'javax.enterprise:cdi-api:2.0-EDR1'
+    compile 'javax.websocket:javax.websocket-api:1.1'
+    compile 'javax.json:javax.json-api:1.0'
+
+    compile 'org.eclipse.jetty.websocket:websocket-servlet:9.3.9.M1'
+    compile 'org.eclipse.jetty.websocket:websocket-server:9.3.9.M1'
+    compile 'org.eclipse.jetty.websocket:javax-websocket-server-impl:9.3.9.M1'
+
+    compile 'org.eclipse.jetty:jetty-server:9.3.9.M1'
+
+    compile "org.mongodb:mongo-java-driver:3.1.1"
+
+}
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+
+
+jar {
+
+    baseName = "WebSocketExample"
+
+    manifest {
+        attributes 'Implementation-Title': 'Firehose',
+                'Implementation-Version': version
+    }
+
+    zip64 true
+
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    } {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+    }
+}

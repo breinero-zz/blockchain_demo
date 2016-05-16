@@ -84,9 +84,9 @@ Vagrant.configure(2) do |config|
     update-java-alternatives -s java-8-oracle
 
     echo "Downloading and building Blockchain examples..."
-    git clone https://github.com/breinero/MongoDB_Spark_Course.git
-    sudo chown -R vagrant:vagrant MongoDB_Spark_Course
-    cd MongoDB_Spark_Course
+    git clone https://github.com/breinero/blockchain_demo.git
+    sudo chown -R vagrant:vagrant blockchain_demo
+    cd blockchain_demo
     chmod 755 gradlew*
     ./gradlew jar
 

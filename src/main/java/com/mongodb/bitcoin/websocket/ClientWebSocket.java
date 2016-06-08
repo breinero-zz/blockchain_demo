@@ -1,6 +1,5 @@
 package com.mongodb.bitcoin.websocket;
 
-import org.bson.Document;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
@@ -25,15 +24,12 @@ public class ClientWebSocket {
     public void addHandler ( Handler handler ) {
         router.setHandler( handler );
 
-        String message = handler.getMessage();
-        if( message != null )
-            sendMessage( handler.getMessage() );
+        sendMessage( handler.getMessage() );
     }
 
     @OnWebSocketMessage
     public void onText(Session session, String message) throws IOException {
-        //System.out.println("Message received from server:" + message);
-        router.route(  Document.parse( message ) );
+        router.route( message );
     }
 
     @OnWebSocketConnect

@@ -1,13 +1,11 @@
 package com.mongodb.bitcoin.websocket;
 
-import org.bson.Document;
-
 /**
  * Created by brein on 5/15/2016.
  */
-public interface Handler {
+public interface Handler <T> {
 
-    void Handle( final Document msg );
+    void Handle( final String msg ) throws Exception;
     String getName();
     String getMessage();
 }

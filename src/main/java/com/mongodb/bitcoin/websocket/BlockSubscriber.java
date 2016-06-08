@@ -1,13 +1,11 @@
 package com.mongodb.bitcoin.websocket;
 
-import org.bson.Document;
-
 /**
  * Created by brein on 5/15/2016.
  */
 public class BlockSubscriber implements Handler {
     @Override
-    public void Handle(Document msg) {
+    public void Handle(String msg) {
         System.out.println( msg );
     }
 

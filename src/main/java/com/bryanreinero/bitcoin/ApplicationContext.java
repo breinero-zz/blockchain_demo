@@ -1,6 +1,6 @@
 package com.bryanreinero.bitcoin;
 
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Created by brein on 6/5/2016.

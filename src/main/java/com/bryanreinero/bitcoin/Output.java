@@ -1,8 +1,12 @@
 package com.bryanreinero.bitcoin;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Created by brein on 6/5/2016.
  */
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Output {
 
     private String hash;

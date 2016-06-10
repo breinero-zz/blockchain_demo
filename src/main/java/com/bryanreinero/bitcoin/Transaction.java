@@ -1,7 +1,7 @@
 package com.bryanreinero.bitcoin;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.mongodb.morphia.annotations.Id;
 
 import java.util.HashSet;
@@ -10,6 +10,7 @@ import java.util.Set;
 /**
  * Created by brein on 6/5/2016.
  */
+
 public class Transaction {
 
     private Integer ver;
@@ -41,7 +42,6 @@ public class Transaction {
     }
 
     private String blockHash;
-
 
     @JsonCreator
     public Transaction( @JsonProperty("hash") String hash ) {

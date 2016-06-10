@@ -46,7 +46,8 @@ dependencies {
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
 
     // http://mvnrepository.com/artifact/com.fasterxml/jackson-module-json-org
-    compile group: 'com.fasterxml', name: 'jackson-module-json-org', version: '0.9.1'
+    compile group: 'com.fasterxml', name: 'jackson-module-json-org', version: '2.7.4'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.4'
     compile 'org.mongodb.morphia:morphia-validation:1.1.1'
 }
 

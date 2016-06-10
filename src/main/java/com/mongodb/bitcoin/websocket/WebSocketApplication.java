@@ -1,9 +1,8 @@
 package com.mongodb.bitcoin.websocket;
 
-import com.bryanreinero.bitcoin.BlockHeader;
-import com.bryanreinero.bitcoin.Transaction;
-import com.mongodb.MongoClient;
-import org.bson.Document;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.DBObject;
+import com.mongodb.util.JSON;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.websocket.api.Session;
@@ -12,8 +11,6 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,7 +22,7 @@ import java.util.concurrent.CountDownLatch;
  * Created by brein on 5/2/2016.
  */
 @WebSocket
-public class WebSocketApplication implements Consumer<BlockHeader>  {
+public class WebSocketApplication {
 
     private Session session;
 
@@ -37,11 +34,8 @@ public class WebSocketApplication implements Consumer<BlockHeader>  {
     private final CountDownLatch latch= new CountDownLatch(1);
 
     private final Map<String, Handler> handlers = new HashMap<String, Handler>();
+    private ObjectMapper mapper = new ObjectMapper();
 
-    private final Morphia morphia;
-    private final Datastore ds;
-
-    private final MongoClient mongoClient;
 
     public WebSocketApplication( String uri ) {
 
@@ -52,16 +46,13 @@ public class WebSocketApplication implements Consumer<BlockHeader>  {
         sslContextFactory.setKeyManagerPassword("password");
         client = new org.eclipse.jetty.websocket.client.WebSocketClient(sslContextFactory);
         this.uri = uri;
-
-        mongoClient = new MongoClient();
-        morphia = new Morphia();
-        morphia.map(BlockHeader.class).map(Transaction.class);
-        ds = morphia.createDatastore( mongoClient, "bitcoin");
     }
 
     public void run() throws Exception {
         client.start();
         ClientUpgradeRequest request = new ClientUpgradeRequest();
+
+
         client.connect( this, new URI( uri ), request);
         latch.await();
     }
@@ -89,8 +80,9 @@ public class WebSocketApplication implements Consumer<BlockHeader>  {
     @OnWebSocketMessage
     public void onText(Session session, String message) throws IOException {
 
-        final Document doc = Document.parse( message );
-        Handler handler = handlers.get( doc.getString( "op" ) );
+        DBObject doc = (DBObject) JSON.parse( message );
+        //final Document doc = Document.parse( message );
+        Handler handler = handlers.get( doc.get( "op" ) );
 
         if( handler == null )
             System.out.println( "Received unhandled message. "+ message );
@@ -119,27 +111,5 @@ public class WebSocketApplication implements Consumer<BlockHeader>  {
 
     public CountDownLatch getLatch() {
         return latch;
-    }
-
-    public static void main(String[] args) {
-
-        final MongoClient mongoClient = new MongoClient();
-
-        WebSocketApplication client = new WebSocketApplication( "wss://ws.blockchain.info/inv" );
-        try {
-            client.run();
-            //client.addHandler( new StatusHandler() );
-            client.addHandler( new BlockHandler( client ) );
-            //client.addHandler( new UnconfirmedTransactionHandler( mongoClient) );
-            client.sendMessage( "{\"op\":\"ping_block\"}" );
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    public void consume(BlockHeader block) {
-        ds.save( block );
     }
 }

@@ -8,13 +8,11 @@ import java.io.IOException;
 /**
  * Created by brein on 5/15/2016.
  */
-public class UnconfirmedTransactionHandler implements Handler {
+public class TransactionHandler implements Handler {
 
-    private final String name = "utx";
-    private final String message = "{\"op\":\"unconfirmed_sub\"}";
     private final Consumer<Transaction> consumer;
 
-    public UnconfirmedTransactionHandler(Consumer<Transaction> consumer) {
+    public TransactionHandler(Consumer<Transaction> consumer) {
         this.consumer = consumer;
     }
 
@@ -31,11 +29,11 @@ public class UnconfirmedTransactionHandler implements Handler {
 
     @Override
     public String getName() {
-        return name;
+        return "utx";
     }
 
     @Override
     public String getMessage() {
-        return message;
+        return "{\"op\":\"unconfirmed_sub\"}";
     }
 }

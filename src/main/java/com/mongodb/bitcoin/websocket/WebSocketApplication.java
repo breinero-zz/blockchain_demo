@@ -1,6 +1,5 @@
 package com.mongodb.bitcoin.websocket;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 import org.eclipse.jetty.util.resource.Resource;
@@ -17,12 +16,15 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.logging.Logger;
 
 /**
  * Created by brein on 5/2/2016.
  */
 @WebSocket
 public class WebSocketApplication {
+
+    static Logger log = Logger.getLogger( WebSocketApplication.class.getName() );
 
     private Session session;
 
@@ -34,8 +36,6 @@ public class WebSocketApplication {
     private final CountDownLatch latch= new CountDownLatch(1);
 
     private final Map<String, Handler> handlers = new HashMap<String, Handler>();
-    private ObjectMapper mapper = new ObjectMapper();
-
 
     public WebSocketApplication( String uri ) {
 
@@ -81,31 +81,31 @@ public class WebSocketApplication {
     public void onText(Session session, String message) throws IOException {
 
         DBObject doc = (DBObject) JSON.parse( message );
-        //final Document doc = Document.parse( message );
         Handler handler = handlers.get( doc.get( "op" ) );
 
         if( handler == null )
-            System.out.println( "Received unhandled message. "+ message );
+
+            log.warning( "Received unhandled message. "+ message );
 
         else {
             try {
                 handler.Handle( doc.get( "x" ).toString() );
             } catch ( Exception e ) {
-                System.out.println( e.getMessage() );
+               log.severe( e.getMessage() );
             }
         }
     }
 
     @OnWebSocketConnect
     public void onConnect(Session session) {
-        System.out.println("Connected to server");
+        log.info("Connected to server");
         this.session=session;
         latch.countDown();
     }
 
     @OnWebSocketClose
     public void onClose( int statusCode, String reason ) {
-        System.out.printf("Connection closed: %d - %s%n",statusCode,reason);
+        log.info("Connection closed. code: "+statusCode+", reason: "+reason);
         this.session = null;
     }
 

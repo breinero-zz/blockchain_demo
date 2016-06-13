@@ -30,7 +30,7 @@ public class Transaction {
     private Integer vin_sz;
 
     @Id
-    private final String hash;
+    private String hash;
     private Integer vout_sz;
 
     public String getBlockHash() {
@@ -47,6 +47,10 @@ public class Transaction {
     public Transaction( @JsonProperty("hash") String hash ) {
         this.hash = hash;
     }
+
+    public Transaction() {
+
+    };
 
     public Integer getVer() {
         return ver;

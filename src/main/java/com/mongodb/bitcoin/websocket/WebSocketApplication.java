@@ -52,7 +52,6 @@ public class WebSocketApplication {
         client.start();
         ClientUpgradeRequest request = new ClientUpgradeRequest();
 
-
         client.connect( this, new URI( uri ), request);
         latch.await();
     }

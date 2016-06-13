@@ -17,6 +17,33 @@ public class Output {
     private Long value;
     private Integer n;
     private String script;
+    private String txID;
+    private String blockHash;
+    private Integer blockHeight;
+
+    public String getTxID() {
+        return txID;
+    }
+
+    public void setTxID(String txID) {
+        this.txID = txID;
+    }
+
+    public String getBlockHash() {
+        return blockHash;
+    }
+
+    public void setBlockHash(String blockHash) {
+        this.blockHash = blockHash;
+    }
+
+    public Integer getBlockHeight() {
+        return blockHeight;
+    }
+
+    public void setBlockHeight(Integer blockHeight) {
+        this.blockHeight = blockHeight;
+    }
 
     public String getHash() {
         return hash;

@@ -5,9 +5,36 @@ package com.bryanreinero.bitcoin;
  */
 public class Input {
 
-    Long sequence;
-    Output prev_out;
-    String script;
+    private Long sequence;
+    private Output prev_out;
+    private String script;
+    private String blockHash;
+    private String txID;
+
+    private Integer block_height;
+    private Long lock_time;
+    private Integer size;
+    private Long time;
+    private Integer tx_index;
+
+    private Integer vout_sz;
+
+
+    public String getBlockHash() {
+        return blockHash;
+    }
+
+    public void setBlockHash(String blockHash) {
+        this.blockHash = blockHash;
+    }
+
+    public String getTxID() {
+        return txID;
+    }
+
+    public void setTxID(String txID) {
+        this.txID = txID;
+    }
 
     public Long getSequence() {
         return sequence;

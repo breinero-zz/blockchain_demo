@@ -79,3 +79,4 @@ jar {
         exclude "META-INF/*.RSA"
     }
 }
+

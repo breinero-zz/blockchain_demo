@@ -48,37 +48,37 @@ public class BlockMaintainer {
         log.info( "starting BlockMaintainer" );
         client.run();
 
-        client.addHandler(
-                new Handler() {
-                    @Override
-                    public void Handle(String msg) throws Exception {
-                        System.out.println( "recieved block" );
-                        handleBlock( mapper.readValue(msg, BlockHeader.class) );
-                    }
-
-                    @Override
-                    public String getName() { return "block"; }
-
-                    @Override
-                    public String getMessage() { return "{\"op\":\"blocks_sub\"}"; }
-                }
-        );
-
         //client.addHandler(
         //        new Handler() {
         //            @Override
         //            public void Handle(String msg) throws Exception {
-        //                System.out.println( "recieved transaction" );
-        //                handleTransaction( mapper.readValue(msg, Transaction.class) );
+        //                System.out.println( "received block" );
+        //                handleBlock( mapper.readValue(msg, BlockHeader.class) );
         //            }
 //
         //            @Override
-        //            public String getName() { return "utx"; }
+        //            public String getName() { return "block"; }
 //
         //            @Override
-        //            public String getMessage() { return  "{\"op\":\"unconfirmed_sub\"}"; }
+        //            public String getMessage() { return "{\"op\":\"blocks_sub\"}"; }
         //        }
         //);
+
+        client.addHandler(
+                new Handler() {
+                    @Override
+                    public void Handle(String msg) throws Exception {
+                        System.out.println( "received transaction" );
+                        handleTransaction( mapper.readValue(msg, Transaction.class) );
+                    }
+
+                    @Override
+                    public String getName() { return "utx"; }
+
+                    @Override
+                    public String getMessage() { return  "{\"op\":\"unconfirmed_sub\"}"; }
+                }
+        );
 
         log.info( "Getting latest block" );
         client.sendMessage( "{\"op\":\"ping_block\"}" );
@@ -101,8 +101,7 @@ public class BlockMaintainer {
 
         // get full block
         try{
-            //getFullBlock( header.getHash() );
-            getAllBlocksRecursively( header.getHash() );
+            getAllBlocks( header.getHash() );
         } catch( Exception e ) {
             log.warning( "Couldn't retrieve block "+header.getHash()+" "+e.getMessage() );
         }
@@ -126,19 +125,36 @@ public class BlockMaintainer {
         );
     }
 
-    public void getAllBlocksRecursively( String hash ) throws Exception {
+    public void getAllBlocks( String hash ) throws Exception {
         do {
             log.info( "Getting full block "+hash );
             String blockData = retriever.getBlockChainData(hash);
             Block b = mapper.readValue(blockData, Block.class);
-            String finalHash = hash;
+
             b.getTx().forEach(
                     t -> {
-                        t.setBlockHash(finalHash);
+                        t.setBlockHash( b.getHash() );
+                        t.setBlock_height( b.getHeight() );
+                        //t.getOut().forEach(
+                        //        o -> {
+                        //            o.setTxID( t.getHash() );
+                        //            o.setBlockHeight( b.getHeight() );
+                        //            o.setTx_index( t.getTx_index() );
+                        //            ds.save( o );
+                        //        }
+                        //);
+//
+                        //t.getInputs().forEach(
+                        //        i -> {
+                        //            String addr = i.getPrev_out().getAddr();
+                        //            Integer tx_index = i.getPrev_out().getTx_index();
+                        //        }
+                        //);
                         ds.save( t );
                     }
             );
             hash = b.getPrev_block();
+            ds.save( b.getBlockHeader() );
         } while( hash != null && !hash.isEmpty() );
     }
 

@@ -48,27 +48,27 @@ public class BlockMaintainer {
         log.info( "starting BlockMaintainer" );
         client.run();
 
-        //client.addHandler(
-        //        new Handler() {
-        //            @Override
-        //            public void Handle(String msg) throws Exception {
-        //                System.out.println( "received block" );
-        //                handleBlock( mapper.readValue(msg, BlockHeader.class) );
-        //            }
-//
-        //            @Override
-        //            public String getName() { return "block"; }
-//
-        //            @Override
-        //            public String getMessage() { return "{\"op\":\"blocks_sub\"}"; }
-        //        }
-        //);
+        client.addHandler(
+                new Handler() {
+                    @Override
+                    public void Handle(String msg) throws Exception {
+                        System.out.println( "received block" );
+                        handleBlock( mapper.readValue(msg, BlockHeader.class) );
+                    }
+
+                    @Override
+                    public String getName() { return "block"; }
+
+                    @Override
+                    public String getMessage() { return "{\"op\":\"blocks_sub\"}"; }
+                }
+        );
 
         client.addHandler(
                 new Handler() {
                     @Override
                     public void Handle(String msg) throws Exception {
-                        System.out.println( "received transaction" );
+                        //log.info( "received transaction" );
                         handleTransaction( mapper.readValue(msg, Transaction.class) );
                     }
 

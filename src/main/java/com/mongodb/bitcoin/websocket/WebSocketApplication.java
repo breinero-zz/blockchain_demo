@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 public class WebSocketApplication {
 
     static Logger log = Logger.getLogger( WebSocketApplication.class.getName() );
+    private static final int MAX_MESSAGE_SIZE = 1000000;
 
     private Session session;
 
@@ -45,6 +46,7 @@ public class WebSocketApplication {
         sslContextFactory.setKeyStorePassword("password");
         sslContextFactory.setKeyManagerPassword("password");
         client = new org.eclipse.jetty.websocket.client.WebSocketClient(sslContextFactory);
+        client.setMaxTextMessageBufferSize( MAX_MESSAGE_SIZE );
         this.uri = uri;
     }
 

@@ -13,7 +13,7 @@ import java.util.Set;
  * Created by brein on 5/27/2016.
  */
 @JsonIgnoreProperties(ignoreUnknown=true)
-@Entity
+@Entity( value="BlockHeader", noClassnameStored=true )
 public class BlockHeader {
 
     @Id

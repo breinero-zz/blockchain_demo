@@ -2,6 +2,7 @@ package com.bryanreinero.bitcoin;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
 import java.util.HashSet;
@@ -10,7 +11,7 @@ import java.util.Set;
 /**
  * Created by brein on 6/5/2016.
  */
-
+@Entity( value="Transaction", noClassnameStored=true )
 public class Transaction {
 
     private Integer ver;

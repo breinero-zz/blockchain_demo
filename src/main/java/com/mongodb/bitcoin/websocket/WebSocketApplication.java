@@ -9,7 +9,9 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+
 import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
+import org.eclipse.jetty.websocket.client.WebSocketClient;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,11 +23,11 @@ import java.util.logging.Logger;
 /**
  * Created by brein on 5/2/2016.
  */
-@WebSocket
+
+@WebSocket(maxTextMessageSize = 100 * 1024)
 public class WebSocketApplication {
 
     static Logger log = Logger.getLogger( WebSocketApplication.class.getName() );
-    private static final int MAX_MESSAGE_SIZE = 100000;
 
     private Session session;
 
@@ -45,8 +47,7 @@ public class WebSocketApplication {
         sslContextFactory.setKeyStoreResource(keyStoreResource);
         sslContextFactory.setKeyStorePassword("password");
         sslContextFactory.setKeyManagerPassword("password");
-        client = new org.eclipse.jetty.websocket.client.WebSocketClient(sslContextFactory);
-        client.setMaxTextMessageBufferSize( MAX_MESSAGE_SIZE );
+        client = new WebSocketClient(sslContextFactory);
         this.uri = uri;
     }
 
@@ -54,6 +55,7 @@ public class WebSocketApplication {
         client.start();
         ClientUpgradeRequest request = new ClientUpgradeRequest();
 
+        log.info( "Connecting to "+uri );
         client.connect( this, new URI( uri ), request);
         latch.await();
     }

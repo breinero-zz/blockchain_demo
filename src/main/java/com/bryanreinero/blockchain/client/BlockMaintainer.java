@@ -11,6 +11,7 @@ import com.mongodb.bitcoin.websocket.Handler;
 import com.mongodb.bitcoin.websocket.WebSocketApplication;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
+import org.mongodb.morphia.query.UpdateOperations;
 
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -28,6 +29,33 @@ public class BlockMaintainer {
     private final Morphia morphia;
     private final Datastore ds;
     private final BlockChainRetriever retriever;
+    private Replicator replicator;
+
+    private boolean firstBlock = true;
+
+    private class Replicator extends Thread {
+
+        private String hash;
+        public Replicator ( String hash ) {
+            this.hash = hash;
+        }
+
+        @Override
+        public void run() {
+            try {
+                do {
+                    Block b = getFullBlock( hash );
+                    hash = b.getPrev_block();
+                } while( hash != null && !hash.isEmpty() );
+            } catch (InterruptedException e) {
+                log.info( "interrupted at block "+hash );
+                Thread.currentThread().interrupt();
+            } catch (Exception e) {
+                log.info( "failed retrieving block "+hash);
+                log.severe( e.getMessage() );
+            }
+        }
+    }
 
     public BlockMaintainer (){
 
@@ -52,7 +80,6 @@ public class BlockMaintainer {
                 new Handler() {
                     @Override
                     public void Handle(String msg) throws Exception {
-                        System.out.println( "received block" );
                         handleBlock( mapper.readValue(msg, BlockHeader.class) );
                     }
 
@@ -85,34 +112,38 @@ public class BlockMaintainer {
     }
 
     public void handleBlock ( BlockHeader header ) throws IOException {
-
-        log.info( "Received new block "+header.getHash() );
-        log.info( "Getting latest block" );
-        // delete pending transactions
-        //header.getTxIndexes().forEach(
-        //        index -> {
-        //            ds.update(
-        //                    ds.createQuery(Transaction.class).filter( "tx_index", index ),
-        //
-        //                    );
-        //        }
-        //);
-        ds.save( header );
-
-        // get full block
-        try{
-            getAllBlocks( header.getHash() );
-        } catch( Exception e ) {
-            log.warning( "Couldn't retrieve block "+header.getHash()+" "+e.getMessage() );
+        if( firstBlock ) {
+            log.info( "Received first block "+header.getHash() );
+            firstBlock = false;
+            replicator = new Replicator( header.getHash() );
+            replicator.start();
+            return;
         }
 
+        log.info( "Received block "+header.getHash() );
+        // first save the new header
+        ds.save( header );
+
+        // update each transaction
+        UpdateOperations<Transaction> ops
+                = ds.createUpdateOperations( Transaction.class ).add( "blockHash", header.getHash() );
+        ops.add( "block_height", header.getHeight() );
+        header.getTxIndexes().forEach(
+                i -> {
+                    ds.update(
+                            ds.createQuery(Transaction.class).field("tx_index").equal(i),
+                            ops,
+                            true
+                    );
+                }
+        );
     }
 
     public void handleTransaction ( Transaction transaction ) {
         ds.save( transaction );
     }
 
-    public void getFullBlock( String hash ) throws Exception {
+    public Block getFullBlock( String hash ) throws Exception {
         log.info( "Getting full block "+hash );
         String blockData = retriever.getBlockChainData( hash );
         Block b = mapper.readValue( blockData, Block.class );
@@ -123,39 +154,7 @@ public class BlockMaintainer {
                     ds.save( t );
                 }
         );
-    }
-
-    public void getAllBlocks( String hash ) throws Exception {
-        do {
-            log.info( "Getting full block "+hash );
-            String blockData = retriever.getBlockChainData(hash);
-            Block b = mapper.readValue(blockData, Block.class);
-
-            b.getTx().forEach(
-                    t -> {
-                        t.setBlockHash( b.getHash() );
-                        t.setBlock_height( b.getHeight() );
-                        //t.getOut().forEach(
-                        //        o -> {
-                        //            o.setTxID( t.getHash() );
-                        //            o.setBlockHeight( b.getHeight() );
-                        //            o.setTx_index( t.getTx_index() );
-                        //            ds.save( o );
-                        //        }
-                        //);
-//
-                        //t.getInputs().forEach(
-                        //        i -> {
-                        //            String addr = i.getPrev_out().getAddr();
-                        //            Integer tx_index = i.getPrev_out().getTx_index();
-                        //        }
-                        //);
-                        ds.save( t );
-                    }
-            );
-            hash = b.getPrev_block();
-            ds.save( b.getBlockHeader() );
-        } while( hash != null && !hash.isEmpty() );
+        return b;
     }
 
     public static void main ( String[] args ) {

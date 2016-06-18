@@ -1,0 +1,35 @@
+{
+	"aggregate" : "Transaction",
+	"pipeline": [
+		{ "$match": { "blockHash": { "$exists": false } } },
+		{ "$unwind": "$out" },
+		{ "$unwind": "$inputs" },
+		{ "$project":
+			{
+				"to": "$out.addr",
+				"satoshi": "$out.value",
+				"inputs": "$inputs"
+			}
+		}
+		,{ "$group":
+			{
+				"_id": "$to",
+				"total": { "$sum": "$satoshi" },
+				"inputs": {
+					"$push": {
+						"from": "$inputs.prev_out.addr",
+						"amount": "$inputs.prev_out.value",
+						"transaction": "$inputs.prev_out.tx_index"
+					}
+				}
+			}
+		}
+		,{ "$project": {
+			"account": "$_id",
+			"total": "$total",
+			"_id": 0,
+			"inputs": "$inputs"
+			}
+		}
+	]
+}

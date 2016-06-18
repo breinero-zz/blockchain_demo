@@ -6,7 +6,7 @@
 http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 
     <listener>
-        <listener-class>com.bryanreinero.lambda.myServletListener</listener-class>
+        <listener-class>com.mongodb.blockchain.servlet.BlockChainServletListener</listener-class>
     </listener>
     <context-param>
         <param-name>mongoHost</param-name>
@@ -17,15 +17,18 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <param-value>27017</param-value>
     </context-param>
     <servlet>
-        <servlet-name>Statistics</servlet-name>
-        <servlet-class>com.bryanreinero.lambda.StatisticsServlet</servlet-class>
+        <servlet-name>UnconfirmedTransactions</servlet-name>
+        <servlet-class>com.mongodb.blockchain.servlet.BlockchainAggregationServlet</servlet-class>
+        <init-param>
+            <param-name>db</param-name>
+            <param-value>bitcoin</param-value>
+        </init-param>
     </servlet>
-
     <servlet-mapping>
-        <servlet-name>Statistics</servlet-name>
-        <url-pattern>/stats</url-pattern>
+        <servlet-name>UnconfirmedTransactions</servlet-name>
+        <url-pattern>/utx</url-pattern>
     </servlet-mapping>
-
+    <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 </web-app>

@@ -1,11 +1,9 @@
 apply plugin: 'jetty'
 
-group 'com.bryanreinero'
-version '0.0.1'
+httpPort = 8081
+stopPort = 9080
+stopKey = "stopKey"
 
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
 
 ext.jettyVersion = '9.3.9.M1'
 
@@ -13,16 +11,7 @@ ext.javaDriverVersion = '3.2.2'
 ext.buildDir = './build'
 
 
-repositories {
-    mavenCentral()
-    mavenLocal()
-    maven { url "https://repository.cloudera.com/artifactory/cloudera-repos/" }
-}
-
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.11'
-    compile files("${System.properties['java.home']}/../lib/tools.jar")
-    compile "org.mongodb:mongo-java-driver:${javaDriverVersion}"
     compile 'org.eclipse.jetty:jetty-server:9.3.9.M1'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.2'
     compile group: 'com.google.guava', name: 'guava', version: '19.0'
@@ -30,4 +19,10 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.4'
     compile 'com.fasterxml.jackson.core:jackson-core:2.7.4'
     compile 'org.mongodb.morphia:morphia-validation:1.1.1'
+}
+
+
+configurations {
+    provided
+    compile.extendsFrom provided
 }

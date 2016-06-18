@@ -1,2 +1,3 @@
 rootProject.name = 'blockchain-app-demo'
 
+include 'blockloader', 'web'

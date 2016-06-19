@@ -24,7 +24,7 @@ public class BlockChainServletListener implements ServletContextListener {
                 new MongoClient( new ServerAddress( dbHost, Integer.parseInt(dbPort)) )
         );
 
-        sc.setAttribute( "ObjectMapper", new ObjectMapper() );
+        sc.setAttribute( "mapper", new ObjectMapper() );
     }
 
     @Override

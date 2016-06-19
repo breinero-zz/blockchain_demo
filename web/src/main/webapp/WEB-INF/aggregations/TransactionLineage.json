@@ -1,0 +1,50 @@
+{
+  "aggregate": "Transaction",
+  "allowDiskUse" : true,
+  "pipeline": [
+    { "$match": { "_id": "txId" } }
+  ,{ "$project": {
+      "input_addr":"$inputs.prev_out.addr"
+    }
+    }
+  ,{ "$unwind": "$input_addr" }
+  ,{ "$graphLookup":
+    {
+      "from": "Transaction",
+      "startWith": "$input_addr",
+      "connectFromField": "inputs.prev_out.addr",
+      "connectToField": "out.addr",
+      "as": "source",
+      "maxDepth": 10,
+      "depthField": "depth"
+    }
+    }
+  ,{ "$unwind": "$source" }
+  ,{ "$project":
+    {
+      "_id": 0,
+      "toAddr":  "$source.out.addr",
+      "fromtx": "$source._id",
+      "address": "$source.inputs.prev_out.addr",
+      "satoshi": "$source.inputs.prev_out.value",
+      "depth": "$source.depth"
+    }
+    }
+  ,{ "$unwind": "$satoshi" }
+  ,{ "$unwind": "$address" }
+  ,{
+      "$group": {
+        _id: "$depth",
+        transactions: {
+          $push: {
+            "toAddr": "$toAddr",
+            "fromtx": "$fromtx",
+            "address": "$address",
+            "satoshi": "$satoshi",
+          }
+        }
+      }
+    }
+  ,{ "$sort": { "_id": 1 } }
+  ]
+}

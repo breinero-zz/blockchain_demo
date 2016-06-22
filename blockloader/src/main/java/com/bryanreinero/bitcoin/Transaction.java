@@ -17,12 +17,12 @@ public class Transaction {
     private Integer ver;
 
     @JsonProperty("inputs")
-    private Set<Input> inputs = new HashSet<>();
+    private Set<com.bryanreinero.bitcoin.Input> inputs = new HashSet<>();
     private Integer block_height;
     private String relayed_by;
 
     @JsonProperty("out")
-    private Set<Output> out = new HashSet<>();
+    private Set<com.bryanreinero.bitcoin.Output> out = new HashSet<>();
     private Long lock_time;
     private Integer size;
     private Boolean double_spend;

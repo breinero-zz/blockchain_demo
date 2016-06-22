@@ -6,6 +6,8 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 
+import java.nio.file.Paths;
+
 /**
  * Created by brein on 6/5/2016.
  */
@@ -16,12 +18,12 @@ public class TestBlockData {
 
     @Test
     public void testInputParsing() {
+
+        String  path = Paths.get("").toAbsolutePath().toString();
         try {
             Input input =
                     mapper.readValue(
-                            new File( "C:\\Users\\brein\\IdeaProjects\\blockchain_demo\\build\\resources\\test" +
-                                    "\\TestInput.json" ), Input.class
-                    );
+                            new File( path+"/src/test/resources/TestInput.json" ), Input.class  );
 
 
             assert( input.getPrev_out().getSpent().equals( true ) );
@@ -35,12 +37,12 @@ public class TestBlockData {
 
     @Test
     public void testOutputParsing() {
+        String  path = Paths.get("").toAbsolutePath().toString();
         try {
 
             Output output =
                 mapper.readValue(
-                            new File( "C:\\Users\\brein\\IdeaProjects\\blockchain_demo\\build\\resources\\test" +
-                                    "\\TestOutput.json" ), Output.class
+                            new File( path+"/src/test/resources/TestOutput.json" ), Output.class
                     );
 
 
@@ -55,27 +57,27 @@ public class TestBlockData {
 
     @Test
     public void TestHeaderParsing() {
+        String  path = Paths.get("").toAbsolutePath().toString();
         try {
             BlockHeader header =
                     mapper.readValue(
-                            new File( "C:\\Users\\brein\\IdeaProjects\\blockchain_demo\\build\\resources\\test" +
-                                    "\\TestBlock.json" ), BlockHeader.class
+                            new File( path+"/src/test/resources/TestBlock.json" ), BlockHeader.class
                     );
 
 
-            assert( header.getHash().equals( "0000000000000bae09a7a393a8acded75aa67e46cb81f7acaa5ad94f9eacd103" ) );
-            assert( header.getVer().equals( 1 ) );
+            assert( header.getHash().equals( "0000000000000000014e23da37f3bde8e1a3510bf08915675a1d235c83777c99" ) );
+            assert( header.getVer().equals( 4 ) );
             assert(
-                    header.getPrev_block().equals( "00000000000007d0f98d9edca880a6c124e25095712df8952e0439ac7409738a" )
+                    header.getPrev_block().equals( "00000000000000000185972cbd605b0be3c7c7830b1dc019a4fae67aa04faf0f" )
             );
-            assert( header.getTime().equals( 1322131230L ) );
+            assert( header.getTime().equals( 1465274513L ) );
             assert(
-                    header.getMrkl_root().equals( "935aa0ed2e29a4b81e0c995c39e06995ecce7ddbebb26ed32d550a72e8200bf5")
+                    header.getMrkl_root().equals( "1997747bbc9eb22256680d613856e5755b5737c3a319d7ecca7bc96263347d40")
             );
-            assert( header.getFee().equals( 200000L ) );
-            assert( header.getBits().equals( 437129626 ) );
-            assert( header.getNonce().equals( 2964215930L ) );
-            assert( header.getN_tx().equals( 22 ) );
+            assert( header.getFee().equals( 14617375L ) );
+            assert( header.getBits().equals( 403014710 ) );
+            assert( header.getNonce().equals( 1133255010L ) );
+            assert( header.getN_tx().equals( 643 ) );
 
 
 
@@ -87,11 +89,11 @@ public class TestBlockData {
 
     @Test
     public void TestTransactionParsing() {
+        String  path = Paths.get("").toAbsolutePath().toString();
         try {
             Transaction transaction =
                     mapper.readValue(
-                            new File( "C:\\Users\\brein\\IdeaProjects\\blockchain_demo\\build\\resources\\test" +
-                                    "\\TestTransaction.json" ), Transaction.class
+                            new File(path +"/src/test/resources/TestTransaction.json" ), Transaction.class
                     );
 
             assert(
@@ -115,15 +117,15 @@ public class TestBlockData {
 
     @Test
     public void TestBlockParsing() {
+        String  path = Paths.get("").toAbsolutePath().toString();
         try {
             Block block =
                     mapper.readValue(
-                            new File( "C:\\Users\\brein\\IdeaProjects\\blockchain_demo\\build\\resources\\test" +
-                                    "\\TestBlock.json" ), Block.class
+                            new File( path +"/src/test/resources/TestBlock.json" ), Block.class
                     );
 
             assert(
-                    block.getHash().equals( "0000000000000bae09a7a393a8acded75aa67e46cb81f7acaa5ad94f9eacd103")
+                    block.getHash().equals( "0000000000000000014e23da37f3bde8e1a3510bf08915675a1d235c83777c99")
             );
             assert( block.getTx().size() == block.getN_tx() );
 

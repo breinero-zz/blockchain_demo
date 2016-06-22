@@ -9,6 +9,9 @@ import org.junit.Test;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -34,14 +37,23 @@ public class TestUnspentAggregation {
 
     @Test
     public void TestWallet() {
-        Transaction tx = ds.find( Transaction.class ).get();
-               // .field( "_id" ).equals( "08f906a56b8d42312171b966a8c38a6e12aebbf1910ce1068746a0d962ae502b" );
+        String  path = Paths.get("").toAbsolutePath().toString();
 
-        Map<String, Wallet> wallets = UnspentCoinAggregator.breakOutTxByAddr( tx );
+        try {
+            Transaction tx =
+                    mapper.readValue(
+                            new File(path +"/src/test/resources/TestTransaction.json" ), Transaction.class
+                    );
 
-        assert( wallets.size() == 3 );
-        assert( wallets.containsKey( "12GV8BDpTFBsZrteSRkJ3gBWGxmPpLHHB7" ) );
-        assert( wallets.containsKey( "1H961QbXzizYjvafNwu5YigjQ2ZRD26sDd" ) );
-        assert( wallets.containsKey( "1EVmQtvNooZSC9KvFGqqGCP6ADbNDJGa5P" ) );
+
+            Map<String, Wallet> wallets = UnspentCoinAggregator.breakOutTxByAddr( tx );
+
+            assert( wallets.size() == 2 );
+            assert( wallets.containsKey( "17Mh4YwmDLQfqJfF7iCpqUc9WuTMAnRXEo" ) );
+            assert( wallets.containsKey( "17jgdoJpzqXiyjULCoKxWSgb4ta95bkHMS" ) );
+        } catch (IOException e) {
+            e.printStackTrace();
+            assert( false );
+        }
     }
 }

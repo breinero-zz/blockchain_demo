@@ -97,13 +97,13 @@ public class TestBlockData {
                     );
 
             assert(
-                    transaction.getHash().equals( "b6f6991d03df0e2e04dafffcd6bc418aac66049e2cd74b80f14ac86db1e3f0da")
+                    transaction.getHash().equals( "7d9e8a48dd3838feff2dad1b971776bd56132078f16084c2a905dcd261e6a17f")
             );
 
             assert( transaction.getInputs().size() == 1 );
             transaction.getInputs().forEach(
                     input -> {
-                        assert( input.getScript().equals( "76a914641ad5051edd97029a003fe9efb29359fcee409d88ac" )  );
+                        assert( input.getScript().equals( "47304402205b59ed2aa07e37e8d5286252460865c78acb63d93665a6050346131746bcdb1902205df1039710953fbbbe04ea50b9f9f46ffe4d94d9ed4b6a8b5148f6d732c320cc012103bc674fe81deb77b80c19751ccfb51f7d5f7636783b13b7781fe49d3d04e6befe" )  );
                     }
             );
 

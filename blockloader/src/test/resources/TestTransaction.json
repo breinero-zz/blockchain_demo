@@ -1,34 +1,46 @@
 {
-  "hash": "b6f6991d03df0e2e04dafffcd6bc418aac66049e2cd74b80f14ac86db1e3f0da",
-  "ver": 1,
-  "vin_sz": 1,
-  "vout_sz": 2,
-  "lock_time": 0,
-  "size": 258,
-  "relayed_by": "64.179.201.80",
-  "block_height": 12200,
-  "tx_index": "12563028",
-  "inputs": [
+  "lock_time":0,
+  "ver":1,
+  "size":225,
+  "inputs":[
     {
-      "prev_out": {
-        "hash": "a3e2bcc9a5f776112497a32b05f4b9e5b2405ed9",
-        "value": "100000000",
-        "tx_index": "12554260",
-        "n": "2"
+      "sequence":4294967295,
+      "prev_out":{
+        "spent":true,
+        "tx_index":152933180,
+        "type":0,
+        "addr":"17Mh4YwmDLQfqJfF7iCpqUc9WuTMAnRXEo",
+        "value":10000000,
+        "n":1,
+        "script":"76a91445ba83eeb00391d0410ceac23adb266e494f852e88ac"
       },
-      "script": "76a914641ad5051edd97029a003fe9efb29359fcee409d88ac"
+      "script":"47304402205b59ed2aa07e37e8d5286252460865c78acb63d93665a6050346131746bcdb1902205df1039710953fbbbe04ea50b9f9f46ffe4d94d9ed4b6a8b5148f6d732c320cc012103bc674fe81deb77b80c19751ccfb51f7d5f7636783b13b7781fe49d3d04e6befe"
     }
   ],
-  "out": [
+  "time":1465274446,
+  "tx_index":152933822,
+  "vin_sz":1,
+  "hash":"7d9e8a48dd3838feff2dad1b971776bd56132078f16084c2a905dcd261e6a17f",
+  "vout_sz":2,
+  "relayed_by":"127.0.0.1",
+  "out":[
     {
-      "value": "98000000",
-      "hash": "29d6a3540acfa0a950bef2bfdc75cd51c24390fd",
-      "script": "76a914641ad5051edd97029a003fe9efb29359fcee409d88ac"
+      "spent":false,
+      "tx_index":152933822,
+      "type":0,
+      "addr":"17Mh4YwmDLQfqJfF7iCpqUc9WuTMAnRXEo",
+      "value":10000,
+      "n":0,
+      "script":"76a91445ba83eeb00391d0410ceac23adb266e494f852e88ac"
     },
     {
-      "value": "2000000",
-      "hash": "17b5038a413f5c5ee288caa64cfab35a0c01914e",
-      "script": "76a914641ad5051edd97029a003fe9efb29359fcee409d88ac"
+      "spent":true,
+      "tx_index":152933822,
+      "type":0,
+      "addr":"17jgdoJpzqXiyjULCoKxWSgb4ta95bkHMS",
+      "value":9800000,
+      "n":1,
+      "script":"76a91449e34f6e2ca44254c35510d135024616faeff63488ac"
     }
   ]
 }

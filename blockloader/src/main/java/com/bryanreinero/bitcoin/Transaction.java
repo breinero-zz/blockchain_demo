@@ -5,8 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by brein on 6/5/2016.
@@ -17,12 +17,12 @@ public class Transaction {
     private Integer ver;
 
     @JsonProperty("inputs")
-    private Set<com.bryanreinero.bitcoin.Input> inputs = new HashSet<>();
+    private List<Input> inputs = new ArrayList<>();
     private Integer block_height;
     private String relayed_by;
 
     @JsonProperty("out")
-    private Set<com.bryanreinero.bitcoin.Output> out = new HashSet<>();
+    private List<com.bryanreinero.bitcoin.Output> out = new ArrayList<>();
     private Long lock_time;
     private Integer size;
     private Boolean double_spend;
@@ -49,9 +49,7 @@ public class Transaction {
         this.hash = hash;
     }
 
-    public Transaction() {
-
-    };
+    public Transaction() {};
 
     public Integer getVer() {
         return ver;
@@ -61,11 +59,11 @@ public class Transaction {
         this.ver = ver;
     }
 
-    public Set<Input> getInputs() {
+    public List<Input> getInputs() {
         return inputs;
     }
 
-    public void setInputs(Set<Input> inputs) {
+    public void setInputs( List<Input> inputs) {
         this.inputs = inputs;
     }
 
@@ -85,11 +83,11 @@ public class Transaction {
         this.relayed_by = relayed_by;
     }
 
-    public Set<Output> getOut() {
+    public List<Output> getOut() {
         return out;
     }
 
-    public void setOut(Set<Output> out) {
+    public void setOut(List<Output> out) {
         this.out = out;
     }
 

@@ -59,4 +59,52 @@ public class Input {
     public void setScript(String script) {
         this.script = script;
     }
+
+    public Integer getBlock_height() {
+        return block_height;
+    }
+
+    public void setBlock_height(Integer block_height) {
+        this.block_height = block_height;
+    }
+
+    public Long getLock_time() {
+        return lock_time;
+    }
+
+    public void setLock_time(Long lock_time) {
+        this.lock_time = lock_time;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    public Long getTime() {
+        return time;
+    }
+
+    public void setTime(Long time) {
+        this.time = time;
+    }
+
+    public Integer getTx_index() {
+        return tx_index;
+    }
+
+    public void setTx_index(Integer tx_index) {
+        this.tx_index = tx_index;
+    }
+
+    public Integer getVout_sz() {
+        return vout_sz;
+    }
+
+    public void setVout_sz(Integer vout_sz) {
+        this.vout_sz = vout_sz;
+    }
 }

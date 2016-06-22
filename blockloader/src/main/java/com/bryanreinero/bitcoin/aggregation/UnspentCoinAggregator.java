@@ -28,7 +28,7 @@ public class UnspentCoinAggregator implements Serializable {
 
         Map<String, Wallet> wallets = new HashMap();
 
-        Set<Input> inputs = tx.getInputs();
+        List<Input> inputs = tx.getInputs();
 
         for( Input input : inputs ) {
             String address = input.getPrev_out().getAddr();
@@ -46,7 +46,7 @@ public class UnspentCoinAggregator implements Serializable {
             wallets.put( wallet.getAddress(), wallet );
         }
 
-        Set<Output> outputs = tx.getOut();
+        List<Output> outputs = tx.getOut();
         for( Output output : outputs ) {
             String address = output.getAddr();
 

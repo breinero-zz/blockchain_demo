@@ -57,7 +57,10 @@ function recursiveAscentLineage( generations ) {
 		if( ( generations.length -1)  == depth )
 			firstAncestors.push( parent );
 	}
-	document.write( { "name": "tx", "children": firstAncestors } );
+
+	var graph = {};
+	graph
+	document.write( JSON.stringify ( { "name": "tx", "children": firstAncestors } ) );
 }
 
 function getLineage() {

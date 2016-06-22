@@ -95,4 +95,18 @@ public class LineageServlet extends HttpServlet {
             resp.sendError( SC_INTERNAL_SERVER_ERROR  );
 
     }
+
+    public String reformat( Document doc ) {
+
+        List<Document> generations = (List<Document>) doc.get( "result" );
+
+        for( int depth = 0; depth < generations.size(); depth++ ) {
+
+            List<Document> transactions = (List<Document>)generations.get( depth ).get( "transactions" );
+            for( int i = 0; i < transactions.size(); i++ ) {
+
+            }
+        }
+        return null;
+    }
 }

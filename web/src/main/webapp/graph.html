@@ -20,11 +20,23 @@
 
 </style>
 <script src="./js/d3.js"></script>
-<body>
+<body  onload="display()" >
 <canvas id="buyers" width="1600" height="400"></canvas>
 <script>
 
-var width = 960,
+function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+
+function display () {
+var width = 1960,
     height = 2200;
 
 var cluster = d3.layout.cluster()
@@ -39,7 +51,10 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(40,0)");
 
-d3.json("./lineage.json", function(error, root) {
+
+var tx = getParameterByName( 'tx' );
+d3.json( "http://127.0.0.1:8081/web/ancestry?tx=65feee3ec73e0eede90d8b5ccb8937f1692144678fb540074299d904b5737f1a",
+function(error, root) {
   if (error) throw error;
 
   var nodes = cluster.nodes(root),
@@ -68,4 +83,5 @@ d3.json("./lineage.json", function(error, root) {
 });
 
 d3.select(self.frameElement).style("height", height + "px");
+}
 </script>

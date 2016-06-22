@@ -1,9 +1,7 @@
-package com.bryanreinero.bitcoin.Aggregation;
+package com.bryanreinero.bitcoin.aggregation;
 
 import com.bryanreinero.bitcoin.BlockHeader;
 import com.bryanreinero.bitcoin.Transaction;
-import com.bryanreinero.bitcoin.aggregation.UnspentCoinAggregator;
-import com.bryanreinero.bitcoin.aggregation.Wallet;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;

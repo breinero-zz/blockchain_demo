@@ -1,8 +1,5 @@
-package com.bryanreinero.bitcoin.Aggregation;
+package com.bryanreinero.bitcoin.aggregation;
 
-import com.bryanreinero.bitcoin.aggregation.Record;
-import com.bryanreinero.bitcoin.aggregation.ReduceWalletFunction;
-import com.bryanreinero.bitcoin.aggregation.Wallet;
 import org.junit.Test;
 
 import java.util.ArrayList;

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<body  onload="getLineage()" >
+<canvas id="buyers" width="1600" height="400"></canvas>
+<script>
+
+function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+function recursiveAscentLineage( generations ) {
+	var parent;
+	var firstAncestors = [];
+	for( var depth = generations.length -1; depth >= 0; depth-- ) {
+		console.log( "depth: "+depth );
+
+		// may be multiple children in each generation
+		for( var i = 0; i < generations[depth].transactions.length; i++ ) {
+
+			var child = generations[ depth ].transactions[i];
+			console.log( "Generation: "+depth
+				+", name: "+child.name
+				+", satoshi: "+child.satoshi
+				+", to: "+child.children	 );
+
+			// copy child into the right format
+			var node = {};
+			node.name = child.name;
+			node.address = child.address;
+			node.satoshi = child.satoshi;
+			node.toAddr = child.toAddr;
+			node.children = [];
+
+			if( parent != undefined ) {
+                // check if this (child) matches in parent
+				console.log( "Checking for paternity on parent "+parent.name );
+			   for( var j = 0; j < parent.toAddr.length; j++ ) {
+			   	if( parent.toAddr[j] == node.address ) {
+			   		console.log( "Match: { parent: "+parent.toAddr[j]+", child:"+node.address+" } ");
+			   		parent.children.push( node );
+			   		console.log( "child count now "+parent.children.length );
+			   	} else {
+			   		console.log( "Miss: { parent: "+parent.toAddr[j]+", child:"+node.address+" } ");
+			   	}
+			   }
+			}
+			parent = node;
+		}
+
+		if( ( generations.length -1)  == depth )
+			firstAncestors.push( parent );
+	}
+	document.write( { "name": "tx", "children": firstAncestors } );
+}
+
+function getLineage() {
+
+    var tx = getParameterByName( 'tx' );
+    var xmlhttp = new XMLHttpRequest();
+
+    xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+            var json = xmlhttp.responseText;
+            recursiveAscentLineage( JSON.parse( json ).result );
+        }
+    }
+    var url = "/web/lineage?tx="+tx;
+
+    xmlhttp.open("GET", url, true);
+    xmlhttp.send();
+};
+
+</script>

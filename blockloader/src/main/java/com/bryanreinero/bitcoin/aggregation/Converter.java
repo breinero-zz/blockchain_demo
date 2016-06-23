@@ -1,6 +1,7 @@
 package com.bryanreinero.bitcoin.aggregation;
 
 import com.bryanreinero.bitcoin.Input;
+import com.bryanreinero.bitcoin.Output;
 import com.bryanreinero.bitcoin.Transaction;
 import org.bson.Document;
 
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class Converter {
 
-    public static Transaction map( Document d ) {
+    public static Transaction mapTx( Document d ) {
         Transaction t = new Transaction();
         t.setBlock_height( d.getInteger( "block_height" ) );
         t.setBlock_height( d.getInteger( "replayed by" ) );
@@ -22,45 +23,63 @@ public class Converter {
         t.setTime( d.getLong("time"));
         t.setTx_index( d.getInteger( "tx_index") );
         t.setVer( d.getInteger("vin_sz ") );
-        t.setInputs((List<Input>) d.get("inputs"));
-
+        t.setInputs(  mapInputs( (List<Document>) d.get("inputs" ) ) );
+        t.setOut( mapOutputs( (List<Document>) d.get( "output" ) ) );
         return t;
     }
-
-    public static List<Input> map( List<Document> docs ) {
-        List<Input> inputs = new ArrayList();
-
+    public static List<Input> mapInputs( List<Document> docs ) {
+        List<Input> inputs = new ArrayList<>();
         docs.forEach(
-                d -> {
-                    Input input = new Input();
-                    //private Long sequence;
-                    input.setSequence( d.getLong( "sequence" ) );
-
-
-                    //private Output prev_out;
-
-                    input.setScript( d.getString( "script" ));
-                    //private String blockHash;
-                    input.setBlockHash( d.getString( "blockHash" ) );
-                    // private String txID;
-                    input.setTxID( d.getString( "txID" ) );
-                    // private Integer block_height;
-                    input.setBlock_height( d.getInteger("block_hieght"));
-                    // private Long lock_time;
-                    input.setLock_time( d.getLong( "lock_time" ));
-                    // private Integer size;
-                    input.setSize( d.getInteger("size"));
-                    // private Long time;
-                    input.setTime( d.getLong("time"));
-                    // private Integer tx_index;
-                    input.setTx_index( d.getInteger("tx_index"));
-                    // private Integer vout_sz;
-                    input.setVout_sz( d.getInteger("vout_sz"));
-
-                    inputs.add( input );
+                document -> {
+                    inputs.add( mapInput( document ) );
                 }
         );
         return inputs;
+    }
+
+    public static Input mapInput( Document d ) {
+
+        Input input = new Input();
+        input.setSequence( d.getLong( "sequence" ) );
+        input.setPrev_out( mapOutput( (Document)d.get("prev_out") ) );
+        input.setScript( d.getString( "script" ));
+        input.setBlockHash( d.getString( "blockHash" ) );
+        input.setTxID( d.getString( "txID" ) );
+        input.setBlock_height( d.getInteger("block_hieght"));
+        input.setLock_time( d.getLong( "lock_time" ));
+        input.setSize( d.getInteger("size"));
+        input.setTime( d.getLong("time"));
+        input.setTx_index( d.getInteger("tx_index"));
+        input.setVout_sz( d.getInteger("vout_sz"));
+
+        return input;
+    }
+
+    public static List<Output> mapOutputs( List<Document> docs ) {
+        List<Output> outputs = new ArrayList<>();
+        docs.forEach(
+                document -> {
+                    outputs.add( mapOutput( document ) );
+                }
+        );
+        return outputs;
+    }
+
+    public static  Output mapOutput( Document d ) {
+        Output output = new Output();
+        output.setHash( d.getString( "hash" ) );
+        output.setSpent( d.getBoolean( "spent" ) );
+        output.setTx_index( d.getInteger( "tx_index" ) );
+        output.setType( d.getInteger( "type" ) );
+        output.setAddr( d.getString( "addr" ) );
+        output.setValue( d.getLong( "value" ) );
+        output.setN( d.getInteger( "n" ) );
+        output.setScript( d.getString( "script" ) );
+        output.setTxID( d.getString( "txID" ) );
+        output.setBlockHash( d.getString( "blockHash" ) );
+        output.setBlockHeight( d.getInteger( "blockHeight" ) );
+
+        return output;
     }
 
 

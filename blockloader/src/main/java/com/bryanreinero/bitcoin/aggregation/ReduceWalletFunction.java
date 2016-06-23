@@ -4,11 +4,17 @@ import org.apache.spark.api.java.function.Function2;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by brein on 6/21/2016.
  */
 public class ReduceWalletFunction implements Function2<Wallet, Wallet, Wallet> {
+
+
+
+    static Logger log = Logger.getLogger( ReduceWalletFunction.class.getName() );
+
 
     @Override
     public Wallet call(Wallet w1, Wallet w2) throws Exception {

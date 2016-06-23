@@ -1,9 +1,11 @@
 package com.bryanreinero.bitcoin.aggregation;
 
+import java.io.Serializable;
+
 /**
  * Created by brein on 6/19/2016.
  */
-public class Record {
+public class Record implements Serializable {
 
     public enum Type{ input, output };
 

@@ -3,7 +3,6 @@ package com.bryanreinero.bitcoin.aggregation;
 import com.bryanreinero.bitcoin.Input;
 import com.bryanreinero.bitcoin.Output;
 import com.bryanreinero.bitcoin.Transaction;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.spark.api.java.MongoSpark;
 import com.mongodb.spark.rdd.api.java.JavaMongoRDD;
 import org.apache.spark.SparkConf;
@@ -16,12 +15,18 @@ import org.bson.Document;
 import scala.Tuple2;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Created by brein on 6/19/2016.
  */
 public class UnspentCoinAggregator implements Serializable {
+
+    static Logger log = Logger.getLogger( UnspentCoinAggregator.class.getName() );
 
 
     public static Map<String, Wallet> breakOutTxByAddr( Transaction tx ) {
@@ -81,19 +86,21 @@ public class UnspentCoinAggregator implements Serializable {
 
         JavaPairRDD<String, Wallet> wallets = rdd.flatMapToPair(
                 new PairFlatMapFunction<Document, String, Wallet> () {
-                    ObjectMapper om = new ObjectMapper();
 
                     @Override
                     public Iterable<Tuple2<String, Wallet>> call(Document document) throws Exception {
-
-                        Map<String, Wallet> wallets = breakOutTxByAddr( Converter.mapTx( document ) );
-                        List< Tuple2<String, Wallet> > tuples = new ArrayList<>();
-
-                        wallets.forEach((s, wallet) -> {
-                            tuples.add( new Tuple2<>( wallet.getAddress(), wallet ) );
+                        try {
+                            Map<String, Wallet> wallets = breakOutTxByAddr(Converter.mapTx(document));
+                            List<Tuple2<String, Wallet>> tuples = new ArrayList<>();
+                            wallets.forEach((s, wallet) -> {
+                                        tuples.add( new Tuple2<>( wallet.getAddress(), wallet ) );
+                                    }
+                            );
+                            return  tuples;
+                        } catch ( Exception e )  {
+                            log.warning( "couldn't process "+document.toString() );
                         }
-                        );
-                        return  tuples;
+                        return null;
                     }
                 }
         );

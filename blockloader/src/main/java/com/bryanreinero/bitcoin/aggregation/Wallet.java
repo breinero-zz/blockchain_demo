@@ -1,12 +1,13 @@
 package com.bryanreinero.bitcoin.aggregation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by brein on 6/19/2016.
  */
-public class Wallet {
+public class Wallet implements Serializable {
 
     private final String address;
     private List<Record> records = new ArrayList<>();

@@ -69,17 +69,17 @@ public class Converter {
 
     public static  Output mapOutput( Document d ) {
         Output output = new Output();
-        output.setHash( d.getString( "hash" ) );
-        output.setSpent( d.getBoolean( "spent" ) );
+        //output.setHash( d.getString( "hash" ) );
+        //output.setSpent( d.getBoolean( "spent" ) );
         output.setTx_index( d.getInteger( "tx_index" ) );
-        output.setType( d.getInteger( "type" ) );
+        //output.setType( d.getInteger( "type" ) );
         output.setAddr( d.getString( "addr" ) );
         output.setValue( d.getLong( "value" ) );
-        output.setN( d.getInteger( "n" ) );
-        output.setScript( d.getString( "script" ) );
-        output.setTxID( d.getString( "txID" ) );
-        output.setBlockHash( d.getString( "blockHash" ) );
-        output.setBlockHeight( d.getInteger( "blockHeight" ) );
+        //output.setN( d.getInteger( "n" ) );
+        //output.setScript( d.getString( "script" ) );
+        //output.setTxID( d.getString( "txID" ) );
+        //output.setBlockHash( d.getString( "blockHash" ) );
+        //output.setBlockHeight( d.getInteger( "blockHeight" ) );
 
         return output;
     }

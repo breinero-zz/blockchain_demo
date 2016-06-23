@@ -14,17 +14,19 @@ import java.util.List;
 public class Converter {
 
     public static Transaction mapTx( Document d ) {
-        Transaction t = new Transaction();
+        Transaction t = new Transaction( d.getString( "_id" ) );
         t.setBlock_height( d.getInteger( "block_height" ) );
-        t.setBlock_height( d.getInteger( "replayed by" ) );
-        t.setLock_time( d.getLong( "lock time" ) );
+        t.setBlockHash( d.getString( "blockHash") );
+        t.setRelayed_by( d.getString( "replayed_by" ) );
+        t.setLock_time( d.getLong( "lock_time" ) );
         t.setSize( d.getInteger( "size" ) );
         t.setDouble_spend( d.getBoolean( "double_spend" ) );
         t.setTime( d.getLong("time"));
         t.setTx_index( d.getInteger( "tx_index") );
-        t.setVer( d.getInteger("vin_sz ") );
+        t.setVer( d.getInteger("ver") );
+        t.setVin_sz( d.getInteger( "vin_sz" ) );
         t.setInputs(  mapInputs( (List<Document>) d.get("inputs" ) ) );
-        t.setOut( mapOutputs( (List<Document>) d.get( "output" ) ) );
+        t.setOut( mapOutputs( (List<Document>) d.get( "out" ) ) );
         return t;
     }
     public static List<Input> mapInputs( List<Document> docs ) {

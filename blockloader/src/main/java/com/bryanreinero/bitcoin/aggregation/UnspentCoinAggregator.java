@@ -86,10 +86,7 @@ public class UnspentCoinAggregator implements Serializable {
                     @Override
                     public Iterable<Tuple2<String, Wallet>> call(Document document) throws Exception {
 
-                        Map<String, Wallet> wallets = breakOutTxByAddr(
-                                    om.readValue( document.toJson(), Transaction.class )
-                        );
-
+                        Map<String, Wallet> wallets = breakOutTxByAddr( Converter.mapTx( document ) );
                         List< Tuple2<String, Wallet> > tuples = new ArrayList<>();
 
                         wallets.forEach((s, wallet) -> {

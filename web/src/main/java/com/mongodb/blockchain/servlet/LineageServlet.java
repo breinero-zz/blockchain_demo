@@ -79,6 +79,7 @@ public class LineageServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
         resp.setContentType("application/json");
+        resp.setHeader( "Access-Control-Allow-Origin", "*");
         boolean error = false;
 
         String txID = req.getParameter( "tx" );

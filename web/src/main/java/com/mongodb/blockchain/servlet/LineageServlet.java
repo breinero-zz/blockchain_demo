@@ -1,5 +1,6 @@
 package com.mongodb.blockchain.servlet;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -24,10 +26,11 @@ import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
  */
 public class LineageServlet extends HttpServlet {
 
+    ObjectMapper om = new ObjectMapper();
 
     static Logger log = Logger.getLogger( LineageServlet.class.getName() );
 
-    private String name;
+    private String servletName;
     private MongoCollection<Document> transactions;
     private MongoDatabase db;
     private String  json;
@@ -57,12 +60,12 @@ public class LineageServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
 
-        name = config.getServletName();
+        servletName = config.getServletName();
 
         final MongoClient client = (MongoClient) config.getServletContext().getAttribute( "mongoclient" );
         db = client.getDatabase( config.getInitParameter( "db" ) );
 
-        String commandFile =  config.getServletContext().getRealPath("/WEB-INF/aggregations/" + name + ".json" );
+        String commandFile =  config.getServletContext().getRealPath("/WEB-INF/aggregations/" + servletName + ".json" );
         try {
             json = readFile( commandFile );
         } catch (IOException x) {
@@ -81,11 +84,26 @@ public class LineageServlet extends HttpServlet {
         String txID = req.getParameter( "tx" );
         json = json.replaceAll( "txId", txID );
 
-        Document d = db.runCommand( Document.parse( json ) );
-        List<Document> groups =  (List<Document>) d.get( "result" );
+        log.warning( "getting lineage for transaction "+txID );
+        log.warning( json );
+
+        Node parent = new Node();
+        parent.setName( txID );
+        List<Document> docs = (List<Document>) db.runCommand( Document.parse( json ) ).get("resuls");
+
+        if( docs == null )
+            log.warning( "There's nothing in the lineage" );
+
+        parent.setChildren( reformat(
+                (List<Document>) db.runCommand( Document.parse( json ) ).get("result"),
+                parent,
+                0
+        ));
 
         try {
-            resp.getWriter().print( db.runCommand( Document.parse( json ) ).toJson() ) ;
+            resp.getWriter().print(
+                    om.writeValueAsString( parent )
+            );
         } catch (IOException e) {
             log.warning( "Cant print response, for reason "+e.getMessage() );
             error = true;
@@ -96,17 +114,38 @@ public class LineageServlet extends HttpServlet {
 
     }
 
-    public String reformat( Document doc ) {
+    public List<Node> reformat( List<Document> generations, Node child, Integer depth ) {
 
-        List<Document> generations = (List<Document>) doc.get( "result" );
+        List<Node> parents = new ArrayList();
+        // go back, to the previous generation, one at a time
+        // generations are List of documents
 
-        for( int depth = 0; depth < generations.size(); depth++ ) {
+        if( depth < generations.size() ) {
+            // go through each transaction in this generation
+            Document transactions = generations.get( depth );
+            List<Document> txs = (List<Document>)transactions.get( "transactions" );
+            for( int i = 0; i < txs.size(); i++ ) {
+                Document document = txs.get( i );
+                Node parent = new Node();
+                parent.setName( document.getString( "fromtx" ) );
+                parent.setAddress( document.getString( "address" ) );
+                parent.setSatoshi( document.getLong( "satoshi") );
+                parent.setChildNames( (List<String>)document.get("toAddr") );
+                parents.add( parent );
 
-            List<Document> transactions = (List<Document>)generations.get( depth ).get( "transactions" );
-            for( int i = 0; i < transactions.size(); i++ ) {
-
+                // check for paternity
+                for (String name : parent.getChildNames() ) {
+                    if( name.equals( child.getAddress() ) ) {
+                        //log.info( "Match: { parent: "+name+", child:"+parent.getAddress()+" } ");
+                        child.addParent( parent );
+                    }
+                    //else {
+                    //    log.info("Miss: { parent: " +name + ", child:" + parent.getAddress() + " } ");
+                    //}
+                }
+                reformat( generations, parent, ( depth +1 ) );
             }
         }
-        return null;
+        return parents;
     }
 }

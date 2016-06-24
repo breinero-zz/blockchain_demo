@@ -15,7 +15,7 @@
       "connectFromField": "inputs.prev_out.addr",
       "connectToField": "out.addr",
       "as": "source",
-      "maxDepth": 10,
+      "maxDepth": 4,
       "depthField": "depth"
     }
     }
@@ -34,9 +34,9 @@
   ,{ "$unwind": "$address" }
   ,{
       "$group": {
-        _id: "$depth",
-        transactions: {
-          $push: {
+        "_id": "$depth",
+        "transactions": {
+          "$push": {
             "toAddr": "$toAddr",
             "fromtx": "$fromtx",
             "address": "$address",

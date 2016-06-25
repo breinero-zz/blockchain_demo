@@ -43,10 +43,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
             <param-name>collection</param-name>
             <param-value>Transaction</param-value>
         </init-param>
-    </servlet><servlet-mapping>
-    <servlet-name>Transaction</servlet-name>
-    <url-pattern>/tx/*</url-pattern>
-</servlet-mapping>
+    </servlet>
     <servlet-mapping>
         <servlet-name>UnconfirmedTransactions</servlet-name>
         <url-pattern>/utx</url-pattern>

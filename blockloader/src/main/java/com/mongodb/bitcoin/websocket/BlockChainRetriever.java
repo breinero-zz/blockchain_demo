@@ -16,17 +16,38 @@ import java.io.InputStreamReader;
  */
 public class BlockChainRetriever {
 
-    private final String baseURI = "https://blockchain.info/";
-    public static final String blockPath = "rawblock/";
+    private final String baseURI = "https://blockchain.info/rawblock/";
+    private final static String latestBlockURL = "https://blockchain.info/latestblock";
+    private CloseableHttpClient httpclient = HttpClients.createDefault();
 
-    private BlockHandler blockHandler;
-    CloseableHttpClient httpclient = HttpClients.createDefault();
+    public String getLastBlockData() {
+        String bString = null;
+        try {
+            CloseableHttpResponse response = httpclient.execute(
+                    new HttpGet( latestBlockURL )
+            );
+
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+
+                InputStream instream = entity.getContent();
+                try {
+                    bString = CharStreams.toString(new InputStreamReader( instream, "UTF-8"));
+                } finally {
+                    instream.close();
+                }
+            }
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
+        return bString;
+    }
 
     public String getBlockChainData(  String id ) {
         String bString = null;
         try {
             CloseableHttpResponse response = httpclient.execute(
-                    new HttpGet( baseURI + blockPath + id )
+                    new HttpGet( baseURI + id )
             );
 
             HttpEntity entity = response.getEntity();

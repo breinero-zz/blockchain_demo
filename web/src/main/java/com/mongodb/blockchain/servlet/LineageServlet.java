@@ -85,13 +85,8 @@ public class LineageServlet extends HttpServlet {
         String txID = req.getParameter( "tx" );
         json = json.replaceAll( "txId", txID );
 
-        log.warning( "getting lineage for transaction "+txID );
-        log.warning( json );
-
-        Node parent = new Node();
-        parent.setName( txID );
         List<Document> docs = (List<Document>) db.runCommand( Document.parse( json ) ).get("resuls");
-
+        Node parent = new Node();
         if( docs == null )
             log.warning( "There's nothing in the lineage" );
 
@@ -100,6 +95,7 @@ public class LineageServlet extends HttpServlet {
                 parent,
                 0
         ));
+        parent.setName( txID );
 
         try {
             resp.getWriter().print(
@@ -128,10 +124,8 @@ public class LineageServlet extends HttpServlet {
             for( int i = 0; i < txs.size(); i++ ) {
                 Document document = txs.get( i );
                 Node parent = new Node();
-                parent.setName( document.getString( "fromtx" ) );
-                parent.setAddress( document.getString( "address" ) );
-                parent.setSatoshi( document.getLong( "satoshi") );
                 parent.setChildNames( (List<String>)document.get("toAddr") );
+                parent.setName( document.getString( "fromtx" ) );
                 parents.add( parent );
 
                 // check for paternity

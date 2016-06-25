@@ -87,6 +87,7 @@ public class BlockPuller {
         String hash = earliest.getPrev_block();
 
         do {
+            log.info( "Getting block "+hash ) ;
             hash = parseAndPersist(
                     retriever.getBlockChainData(hash) ).getPrev_block();
         } while( hash != null || !hash.isEmpty() );
@@ -106,7 +107,7 @@ public class BlockPuller {
     }
 
     public static void main ( String[] args ) {
-        
+
         try {
             BlockPuller puller = new BlockPuller);
             puller.run();

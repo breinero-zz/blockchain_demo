@@ -68,9 +68,10 @@ public class BlockPuller {
 
     public void run() throws Exception {
 
-        BlockHeader earliest = ds.find( BlockHeader.class).order("height").limit(1).get();
+        MongoCollection<Document> coll = mongoClient.getDatabase("bitcoin").getCollection("BlockHeader");
+        Document earliest = coll.find().sort( new Document( "height", 1  ) ).limit(1).first();
 
-        String hash = earliest.getPrev_block();
+        String hash = earliest.getString( "prev_block" );
 
         do {
             log.info( "Getting block "+hash ) ;

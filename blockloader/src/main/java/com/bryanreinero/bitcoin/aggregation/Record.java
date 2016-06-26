@@ -13,6 +13,7 @@ public class Record implements Serializable {
     Long value;
     Type type;
     Integer tx_Index;
+    Integer height;
 
     public Integer getTx_Index() {
         return tx_Index;
@@ -44,5 +45,13 @@ public class Record implements Serializable {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
     }
 }

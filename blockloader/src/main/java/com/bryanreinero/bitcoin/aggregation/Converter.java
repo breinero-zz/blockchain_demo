@@ -15,7 +15,8 @@ public class Converter {
 
     public static Transaction mapTx( Document d ) {
         Transaction t = new Transaction( d.getString( "_id" ) );
-        t.setBlock_height( d.getInteger( "block_height" ) );
+        if( d.getInteger( "block_height" ) != null )
+            t.setBlock_height( d.getInteger( "block_height" ) );
         t.setBlockHash( d.getString( "blockHash") );
         t.setRelayed_by( d.getString( "replayed_by" ) );
         t.setLock_time( d.getLong( "lock_time" ) );
@@ -79,7 +80,7 @@ public class Converter {
         //output.setScript( d.getString( "script" ) );
         //output.setTxID( d.getString( "txID" ) );
         //output.setBlockHash( d.getString( "blockHash" ) );
-        //output.setBlockHeight( d.getInteger( "blockHeight" ) );
+        //output.setBlockHeight( d.getInteger( "block_height" ) );
 
         return output;
     }

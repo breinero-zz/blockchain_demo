@@ -52,13 +52,13 @@ public class ReduceWalletFunction implements Function2<Wallet, Wallet, Wallet> {
         // merge what's left over
         w1.getRecords().forEach(
                 record -> {
-                    if( record.getType() == Record.Type.output )
-                        mergedRecords.add( record );
+                    if( record.getType() == Record.Type.output && record.getValue() > 0 )
+                        mergedRecords.add(record);
                 }
         );
         w2.getRecords().forEach(
                 record -> {
-                    if( record.getType() == Record.Type.output )
+                    if( record.getType() == Record.Type.output && record.getValue() > 0  )
                         mergedRecords.add( record );
                 }
         );

@@ -36,7 +36,14 @@ public class UnspentCoinAggregator implements Serializable {
         List<Input> inputs = tx.getInputs();
 
         for( Input input : inputs ) {
+
             String address = input.getPrev_out().getAddr();
+            if( address == null || address.isEmpty() ) {
+                log.warning( "Transaction "+tx.getHash()+" has no address in on of its inputs." +
+                        " Cowardly failing to process" );
+                continue;
+            }
+
             Wallet wallet = null;
             if( ( wallet = wallets.get( address ) ) == null )
                 wallet = new Wallet( address );
@@ -64,6 +71,7 @@ public class UnspentCoinAggregator implements Serializable {
                 record.setType( Record.Type.output );
                 record.setValue( output.getValue() );
                 record.setTx_Index( output.getTx_index() );
+                record.setHeight( tx.getBlock_height() );
 
             wallet.getRecords().add( record );
             wallets.put( wallet.getAddress(), wallet );
@@ -85,23 +93,19 @@ public class UnspentCoinAggregator implements Serializable {
         JavaMongoRDD<Document> rdd = MongoSpark.load(jsc);
 
         JavaPairRDD<String, Wallet> wallets = rdd.flatMapToPair(
-                new PairFlatMapFunction<Document, String, Wallet> () {
-
-                    @Override
-                    public Iterable<Tuple2<String, Wallet>> call(Document document) throws Exception {
-                        try {
-                            Map<String, Wallet> wallets = breakOutTxByAddr(Converter.mapTx(document));
-                            List<Tuple2<String, Wallet>> tuples = new ArrayList<>();
-                            wallets.forEach((s, wallet) -> {
-                                        tuples.add( new Tuple2<>( wallet.getAddress(), wallet ) );
-                                    }
-                            );
-                            return  tuples;
-                        } catch ( Exception e )  {
-                            log.warning( "couldn't process "+document.toString() );
-                        }
-                        return null;
+                (PairFlatMapFunction<Document, String, Wallet>) document -> {
+                    List<Tuple2<String, Wallet>> tuples = new ArrayList<>();
+                    try {
+                        Map<String, Wallet> wallets1 = breakOutTxByAddr(Converter.mapTx(document));
+                        wallets1.forEach((s, wallet) -> {
+                                    tuples.add( new Tuple2<>( wallet.getAddress(), wallet ) );
+                                }
+                        );
+                    } catch ( Exception e )  {
+                        log.warning( "couldn't process "+document.getString("_id") );
+                        log.warning( e.toString() );
                     }
+                    return tuples;
                 }
         );
 
@@ -124,6 +128,7 @@ public class UnspentCoinAggregator implements Serializable {
                                         Document output = new Document( "txId", record.getTx() );
                                         output.put( "tx_index", record.getTx_Index() );
                                         output.put( "satoshi", record.getValue() );
+                                        output.put( "height", record.getHeight() );
                                         total[0] += record.getValue();
                                         outputs.add( output );
                                     }

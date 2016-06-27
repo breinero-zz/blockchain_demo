@@ -4,16 +4,16 @@
   "pipeline": [
     { "$match": { "_id": "txId" } }
   ,{ "$project": {
-      "input_addr":"$inputs.prev_out.addr"
+      "input_txIndex":"$inputs.prev_out.tx_index"
     }
     }
-  ,{ "$unwind": "$input_addr" }
+  ,{ "$unwind": "$input_txIndex" }
   ,{ "$graphLookup":
     {
       "from": "Transaction",
-      "startWith": "$input_addr",
-      "connectFromField": "inputs.prev_out.addr",
-      "connectToField": "out.addr",
+      "startWith": "$input_txIndex",
+      "connectFromField": "inputs.prev_out.tx_index",
+      "connectToField": "out.tx_index",
       "as": "source",
       "maxDepth": 4,
       "depthField": "depth"

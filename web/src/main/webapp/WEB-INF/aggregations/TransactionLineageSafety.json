@@ -7,7 +7,7 @@
       "input_addr":"$inputs.prev_out.addr"
     }
     }
-  ,{ "$unwind": "$input_addr" }
+  ,{ "$unwind": "$input_addrS" }
   ,{ "$graphLookup":
     {
       "from": "Transaction",
@@ -15,6 +15,7 @@
       "connectFromField": "inputs.prev_out.addr",
       "connectToField": "out.addr",
       "as": "source",
+      //"maxDepth": 4,
       "depthField": "depth"
     }
     }
@@ -45,11 +46,6 @@
       }
     }
   ,{ "$sort": { "_id": 1 } }
-  ,{ $project: {
-      "_id": 0 ,
-      depth: "$_id",
-      transactions: "$transactions"
-    }
-    }
+  ,
   ]
 }
